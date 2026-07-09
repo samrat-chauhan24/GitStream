@@ -54,8 +54,7 @@ export class GitHubLoader {
     const paths = tree.nodes
       .filter(node => node.type === "blob")
       .map(node => node.path)
-      .slice(0,10); // temp limit 
-      console.log(paths);
+      .slice(0,10); // temp limit
 
     // Download files
     const files =
