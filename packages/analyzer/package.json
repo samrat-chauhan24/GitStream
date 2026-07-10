@@ -1,0 +1,18 @@
+{
+  "name": "@gitstream/analyzer",
+  "version": "0.1.0",
+  "description": "Static source code analyzer for GitStream.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.9"
+  }
+}
