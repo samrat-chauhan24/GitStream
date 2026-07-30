@@ -44,6 +44,28 @@ importers:
         specifier: ^4.1.9
         version: 4.1.9(@types/node@26.1.0)(vite@8.1.3(@types/node@26.1.0))
 
+  packages/compiler:
+    dependencies:
+      '@gitstream/analyzer':
+        specifier: workspace:*
+        version: link:../analyzer
+      '@gitstream/dependency-graph':
+        specifier: workspace:*
+        version: link:../dependency-graph
+      '@gitstream/resolver':
+        specifier: workspace:*
+        version: link:../resolver
+      '@gitstream/virtual-fs':
+        specifier: workspace:*
+        version: link:../virtual-fs
+    devDependencies:
+      typescript:
+        specifier: ^5.x
+        version: 5.9.3
+      vitest:
+        specifier: ^4.x
+        version: 4.1.9(@types/node@26.1.0)(vite@8.1.3(@types/node@26.1.0))
+
   packages/dependency-graph:
     dependencies:
       '@gitstream/analyzer':

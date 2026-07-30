@@ -1,0 +1,11 @@
+/**
+ * Thrown when compilation fails.
+ */
+export class CompilationError extends Error {
+
+  constructor(message: string) {
+    super(message);
+    this.name = "CompilationError";
+  }
+
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@gitstream/compiler",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@gitstream/virtual-fs": "workspace:*",
+    "@gitstream/analyzer": "workspace:*",
+    "@gitstream/resolver": "workspace:*",
+    "@gitstream/dependency-graph": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.x",
+    "vitest": "^4.x"
+  }
+}
