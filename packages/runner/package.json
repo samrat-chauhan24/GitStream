@@ -18,7 +18,8 @@
     "@gitstream/virtual-fs": "workspace:*",
     "@gitstream/core": "workspace:*",
     "@gitstream/analyzer": "workspace:*",
-    "@gitstream/resolver": "workspace:*"
+    "@gitstream/resolver": "workspace:*",
+    "@gitstream/project-detector": "workspace:*"
 
 
   }

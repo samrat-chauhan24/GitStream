@@ -45,19 +45,30 @@ describe("Runner", () => {
 
   }
 
-  it("should execute the entry module", () => {
+  it("should execute the detected entry module", () => {
 
     const runner =
       createRunner({
-        "/index.ts": `
+
+        "/package.json": JSON.stringify({
+          dependencies: {
+            react: "^19.0.0",
+          },
+          devDependencies: {
+            vite: "^7.0.0",
+          },
+        }),
+
+        "/src/main.tsx": `
 module.exports = {
   hello: "world",
 };
 `,
+
       });
 
     expect(
-      runner.run("/index.ts"),
+      runner.run(),
     ).toEqual({
       hello: "world",
     });
@@ -69,32 +80,70 @@ module.exports = {
     const runner =
       createRunner({
 
-        "/index.ts": `
+        "/package.json": JSON.stringify({
+          dependencies: {
+            react: "^19.0.0",
+          },
+          devDependencies: {
+            vite: "^7.0.0",
+          },
+        }),
+
+        "/src/main.tsx": `
 import { hello } from "./hello";
 
 module.exports = hello;
 `,
 
-        "/hello.ts": `
+        "/src/hello.ts": `
 export const hello = "world";
 `,
 
       });
 
     expect(
-      runner.run("/index.ts"),
+      runner.run(),
     ).toBe("world");
 
   });
 
-  it("should throw for missing entry", () => {
+  it("should throw when package.json is missing", () => {
 
     const runner =
-      createRunner({});
+      createRunner({
+
+        "/src/main.tsx": `
+module.exports = {};
+`,
+
+      });
 
     expect(() =>
-      runner.run("/missing.ts"),
-    ).toThrow();
+      runner.run(),
+    ).toThrow(
+      "package.json not found.",
+    );
+
+  });
+
+  it("should throw when entry point is missing", () => {
+
+    const runner =
+      createRunner({
+
+        "/package.json": JSON.stringify({
+          dependencies: {
+            react: "^19.0.0",
+          },
+        }),
+
+      });
+
+    expect(() =>
+      runner.run(),
+    ).toThrow(
+      "Unable to determine project entry point.",
+    );
 
   });
 
@@ -105,7 +154,16 @@ export const hello = "world";
     const runner =
       createRunner({
 
-        "/index.ts": `
+        "/package.json": JSON.stringify({
+          dependencies: {
+            react: "^19.0.0",
+          },
+          devDependencies: {
+            vite: "^7.0.0",
+          },
+        }),
+
+        "/src/main.tsx": `
 globalThis.__count++;
 
 module.exports =
@@ -115,11 +173,11 @@ module.exports =
       });
 
     expect(
-      runner.run("/index.ts"),
+      runner.run(),
     ).toBe(1);
 
     expect(
-      runner.run("/index.ts"),
+      runner.run(),
     ).toBe(2);
 
   });

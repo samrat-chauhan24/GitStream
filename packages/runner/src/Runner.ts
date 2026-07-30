@@ -1,16 +1,20 @@
 import { Compiler } from "@gitstream/compiler";
 import { DependencyGraph } from "@gitstream/dependency-graph";
+import { ProjectDetector } from "@gitstream/project-detector";
 import { Runtime } from "@gitstream/runtime";
 import { VirtualFileSystem } from "@gitstream/virtual-fs";
 
 /**
  * High-level GitStream execution pipeline.
  *
- * Coordinates compilation and execution.
+ * Automatically detects the project entry point,
+ * compiles the project, and executes it.
  */
 export class Runner {
 
   private readonly compiler: Compiler;
+
+  private readonly detector: ProjectDetector;
 
   constructor(
     private readonly vfs: VirtualFileSystem,
@@ -23,18 +27,24 @@ export class Runner {
         this.graph,
       );
 
+    this.detector =
+      new ProjectDetector(
+        this.vfs,
+      );
+
   }
 
   /**
-   * Compiles and executes the project.
+   * Detects, compiles, and executes the project.
    */
-  run(
-    entry: string,
-  ): unknown {
+  run(): unknown {
+
+    const project =
+      this.detector.detect();
 
     const bundle =
       this.compiler.compile(
-        entry,
+        project.entry,
       );
 
     const runtime =

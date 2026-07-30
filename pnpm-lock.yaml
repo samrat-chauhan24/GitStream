@@ -146,6 +146,9 @@ importers:
       '@gitstream/dependency-graph':
         specifier: workspace:*
         version: link:../dependency-graph
+      '@gitstream/project-detector':
+        specifier: workspace:*
+        version: link:../project-detector
       '@gitstream/resolver':
         specifier: workspace:*
         version: link:../resolver
