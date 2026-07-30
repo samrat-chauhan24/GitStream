@@ -11,7 +11,9 @@
     "@gitstream/virtual-fs": "workspace:*",
     "@gitstream/analyzer": "workspace:*",
     "@gitstream/resolver": "workspace:*",
-    "@gitstream/dependency-graph": "workspace:*"
+    "@gitstream/dependency-graph": "workspace:*",
+    "@gitstream/core": "workspace:*",
+    "@gitstream/runtime": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.x",

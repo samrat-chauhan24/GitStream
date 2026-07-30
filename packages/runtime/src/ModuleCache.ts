@@ -1,4 +1,4 @@
-import type { Module } from "./Module";
+import type { Module } from "@gitstream/core";
 
 /**
  * Stores executed modules.

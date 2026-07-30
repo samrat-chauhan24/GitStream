@@ -1,21 +1,11 @@
-import type { Module } from "./Module";
+import type {
+  Module,
+  ModuleFactory,
+  ModuleRegistry,
+} from "@gitstream/core";
+
 import { ModuleCache } from "./ModuleCache";
 import { RuntimeError } from "./errors/RuntimeError";
-
-/**
- * A compiled GitStream module.
- */
-export type ModuleFactory = (
-  module: Module,
-  exports: unknown,
-  require: (id: string) => unknown,
-) => void;
-
-/**
- * Registry of compiled modules.
- */
-export type ModuleRegistry =
-  Record<string, ModuleFactory>;
 
 /**
  * CommonJS require implementation.
@@ -43,14 +33,23 @@ export class Require {
     }
 
     // Missing module
-    const factory =
+    const source =
       this.modules[id];
 
-    if (!factory) {
+    if (!source) {
       throw new RuntimeError(
         `Cannot find module "${id}"`,
       );
     }
+
+    // Lazily compile the module source
+    const factory =
+      new Function(
+          "module",
+          "exports",
+          "require",
+          source,
+      ) as ModuleFactory;
 
     // Create module before execution.
     // Enables circular dependencies.

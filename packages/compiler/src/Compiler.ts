@@ -1,25 +1,22 @@
+import type {
+  ModuleRegistry,
+} from "@gitstream/core";
+
+import type { Bundle } from "./Bundle";
+
 import { DependencyGraph } from "@gitstream/dependency-graph";
 import { VirtualFileSystem } from "@gitstream/virtual-fs";
 
-import { Bundle } from "./Bundle";
-import { ModuleWrapper } from "./ModuleWrapper";
-import { RuntimeGenerator } from "./RuntimeGenerator";
-import { Transpiler } from "./Transpiler";
 import { ModuleTransformer } from "./ModuleTransformer";
+import { Transpiler } from "./Transpiler";
 
 /**
- * Compiles a project into a single executable bundle.
+ * Compiles a project into an executable bundle.
  */
 export class Compiler {
 
   private readonly transpiler =
     new Transpiler();
-
-  private readonly wrapper =
-    new ModuleWrapper();
-
-  private readonly runtime =
-    new RuntimeGenerator();
 
   private readonly transformer =
     new ModuleTransformer();
@@ -40,38 +37,37 @@ export class Compiler {
     const dependencyGraph =
       this.graph.build(entry);
 
-    const modules: string[] = [];
+    const modules: ModuleRegistry = {};
 
     for (const node of dependencyGraph.nodes) {
 
       const source =
         this.vfs.readFile(node.path);
 
+      if (source === undefined) {
+        throw new Error(
+          `Module not found: ${node.path}`,
+        );
+      }
+
       const transpiled =
-        this.transpiler.transpile(source);
-
-      const transformed =
-        this.transformer.transform(transpiled);
-
-      const wrapped =
-        this.wrapper.wrap(
-          node.path,
-          transformed,
+        this.transpiler.transpile(
+          source,
         );
 
-      modules.push(wrapped);
+      const transformed =
+        this.transformer.transform(
+          transpiled,
+        );
+
+      modules[node.path] =
+        transformed;
 
     }
 
-    const code =
-      this.runtime.generate(
-        entry,
-        modules,
-      );
-
     return {
       entry,
-      code,
+      modules,
     };
 
   }

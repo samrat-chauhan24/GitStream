@@ -1,16 +1,18 @@
+import type { ModuleRegistry } from "@gitstream/core";
+
 /**
  * Represents the compiled output bundle.
  */
 export interface Bundle {
 
   /**
-   * The generated JavaScript bundle.
-   */
-  code: string;
-
-  /**
-   * The entry file used for compilation.
+   * Entry module.
    */
   entry: string;
+
+  /**
+   * Compiled module registry.
+   */
+  modules: ModuleRegistry;
 
 }

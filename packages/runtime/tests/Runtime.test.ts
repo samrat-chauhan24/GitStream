@@ -1,25 +1,23 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { Runtime } from "../src/Runtime";
 
 describe("Runtime", () => {
 
+  beforeEach(() => {
+    (globalThis as any).__count = 0;
+  });
+
   it("should execute the entry module", () => {
 
     const runtime =
-      new Runtime(
-        {
-          "/index.ts": (
-            module,
-          ) => {
-
-            module.exports = {
-              message: "Hello GitStream",
-            };
-
-          },
-        },
-      );
+      new Runtime({
+        "/index.ts": `
+module.exports = {
+  message: "Hello GitStream",
+};
+`,
+      });
 
     expect(
       runtime.run("/index.ts"),
@@ -31,48 +29,36 @@ describe("Runtime", () => {
 
   it("should reuse cached modules", () => {
 
-    let count = 0;
-
     const runtime =
-      new Runtime(
-        {
-          "/index.ts": (
-            module,
-          ) => {
+      new Runtime({
+        "/index.ts": `
+globalThis.__count++;
 
-            count++;
-
-            module.exports = count;
-
-          },
-        },
-      );
+module.exports =
+  globalThis.__count;
+`,
+      });
 
     runtime.run("/index.ts");
     runtime.run("/index.ts");
 
-    expect(count).toBe(1);
+    expect(
+      (globalThis as any).__count,
+    ).toBe(1);
 
   });
 
   it("should reset the cache", () => {
 
-    let count = 0;
-
     const runtime =
-      new Runtime(
-        {
-          "/index.ts": (
-            module,
-          ) => {
+      new Runtime({
+        "/index.ts": `
+globalThis.__count++;
 
-            count++;
-
-            module.exports = count;
-
-          },
-        },
-      );
+module.exports =
+  globalThis.__count;
+`,
+      });
 
     runtime.run("/index.ts");
 
@@ -80,7 +66,9 @@ describe("Runtime", () => {
 
     runtime.run("/index.ts");
 
-    expect(count).toBe(2);
+    expect(
+      (globalThis as any).__count,
+    ).toBe(2);
 
   });
 

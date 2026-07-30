@@ -1,8 +1,7 @@
+import type { ModuleRegistry } from "@gitstream/core";
+
 import { ModuleCache } from "./ModuleCache";
-import {
-  ModuleRegistry,
-  Require,
-} from "./Require";
+import { Require } from "./Require";
 
 /**
  * Executes compiled GitStream bundles.
@@ -12,7 +11,7 @@ export class Runtime {
   private readonly cache =
     new ModuleCache();
 
-  private readonly require;
+  private readonly require: Require;
 
   constructor(
     private readonly modules: ModuleRegistry,

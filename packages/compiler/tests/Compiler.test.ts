@@ -1,102 +1,86 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import { Analyzer } from "@gitstream/analyzer";
-import { DependencyGraph } from "@gitstream/dependency-graph";
-import { Resolver } from "@gitstream/resolver";
-import { VirtualFileSystem } from "@gitstream/virtual-fs";
+import { Runtime } from "@gitStream/runtime";
 
-import { Compiler } from "../src";
+describe("Runtime", () => {
 
-describe("Compiler", () => {
+  beforeEach(() => {
+    (globalThis as any).__count = 0;
+  });
 
-  it("should compile a single file", () => {
+  it("should execute the entry module", () => {
 
-    const vfs = new VirtualFileSystem();
+    const runtime =
+      new Runtime({
+        "/index.ts": `
+module.exports = {
+  message: "Hello GitStream",
+};
+`,
+      });
 
-    vfs.writeFile(
-      "/src/App.ts",
-      `console.log("Hello");`
-    );
-
-    const compiler = new Compiler(
-      vfs,
-      new DependencyGraph(
-        vfs,
-        new Analyzer(),
-        new Resolver(vfs)
-      )
-    );
-
-    const bundle = compiler.compile(
-      "/src/App.ts"
-    );
-
-    expect(bundle.entry).toBe(
-      "/src/App.ts"
-    );
-
-    expect(bundle.code).toContain(
-      'console.log("Hello");'
-    );
+    expect(
+      runtime.run("/index.ts"),
+    ).toEqual({
+      message: "Hello GitStream",
+    });
 
   });
 
-  it("should include wrapped modules", () => {
+  it("should reuse cached modules", () => {
 
-    const vfs = new VirtualFileSystem();
+    const runtime =
+      new Runtime({
+        "/index.ts": `
+globalThis.__count++;
 
-    vfs.writeFile(
-      "/src/App.ts",
-      `console.log("App");`
-    );
+module.exports =
+  globalThis.__count;
+`,
+      });
 
-    const compiler = new Compiler(
-      vfs,
-      new DependencyGraph(
-        vfs,
-        new Analyzer(),
-        new Resolver(vfs)
-      )
-    );
+    runtime.run("/index.ts");
+    runtime.run("/index.ts");
 
-    const bundle = compiler.compile(
-      "/src/App.ts"
-    );
-
-    expect(bundle.code).toContain(
-      '"/src/App.ts": function'
-    );
+    expect(
+      (globalThis as any).__count,
+    ).toBe(1);
 
   });
 
-  it("should generate a runtime", () => {
+  it("should reset the cache", () => {
 
-    const vfs = new VirtualFileSystem();
+    const runtime =
+      new Runtime({
+        "/index.ts": `
+globalThis.__count++;
 
-    vfs.writeFile(
-      "/src/App.ts",
-      ""
-    );
+module.exports =
+  globalThis.__count;
+`,
+      });
 
-    const compiler = new Compiler(
-      vfs,
-      new DependencyGraph(
-        vfs,
-        new Analyzer(),
-        new Resolver(vfs)
-      )
-    );
+    runtime.run("/index.ts");
 
-    const bundle = compiler.compile(
-      "/src/App.ts"
-    );
+    runtime.reset();
 
-    expect(bundle.code).toContain(
-      "function require"
-    );
+    runtime.run("/index.ts");
 
-    expect(bundle.code).toContain(
-      'require("/src/App.ts")'
+    expect(
+      (globalThis as any).__count,
+    ).toBe(2);
+
+  });
+
+  it("should throw for missing entry", () => {
+
+    const runtime =
+      new Runtime({});
+
+    expect(() =>
+      runtime.run("/missing.ts"),
+    ).toThrow(
+      'Cannot find module "/missing.ts"',
     );
 
   });

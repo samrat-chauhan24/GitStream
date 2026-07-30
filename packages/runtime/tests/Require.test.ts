@@ -1,29 +1,24 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import {
-  Require,
-} from "../src/Require";
-
-import {
-  ModuleCache,
-} from "../src/ModuleCache";
+import { ModuleCache } from "../src/ModuleCache";
+import { Require } from "../src/Require";
 
 describe("Require", () => {
+
+  beforeEach(() => {
+    (globalThis as any).__count = 0;
+  });
 
   it("should load a module", () => {
 
     const runtime =
       new Require(
         {
-          "/index.ts": (
-            module,
-          ) => {
-
-            module.exports = {
-              hello: "world",
-            };
-
-          },
+          "/index.ts": `
+module.exports = {
+  hello: "world",
+};
+`,
         },
         new ModuleCache(),
       );
@@ -38,20 +33,15 @@ describe("Require", () => {
 
   it("should cache executed modules", () => {
 
-    let count = 0;
-
     const runtime =
       new Require(
         {
-          "/index.ts": (
-            module,
-          ) => {
+          "/index.ts": `
+globalThis.__count++;
 
-            count++;
-
-            module.exports = count;
-
-          },
+module.exports =
+  globalThis.__count;
+`,
         },
         new ModuleCache(),
       );
@@ -60,7 +50,9 @@ describe("Require", () => {
     runtime.load("/index.ts");
     runtime.load("/index.ts");
 
-    expect(count).toBe(1);
+    expect(
+      (globalThis as any).__count,
+    ).toBe(1);
 
   });
 
@@ -85,29 +77,17 @@ describe("Require", () => {
     const runtime =
       new Require(
         {
-          "/a.ts": (
-            module,
-            exports,
-            require,
-          ) => {
+          "/a.ts": `
+require("/b.ts");
 
-            require("/b.ts");
+module.exports = "A";
+`,
 
-            module.exports = "A";
+          "/b.ts": `
+require("/a.ts");
 
-          },
-
-          "/b.ts": (
-            module,
-            exports,
-            require,
-          ) => {
-
-            require("/a.ts");
-
-            module.exports = "B";
-
-          },
+module.exports = "B";
+`,
         },
         new ModuleCache(),
       );
