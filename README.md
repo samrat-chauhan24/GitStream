@@ -142,15 +142,23 @@ v1 Complete
 
 ---
 
-## 🚧 resolver
+## ✅ resolver
 
-Resolves import specifiers into actual files.
+Resolves module import specifiers into actual files inside the Virtual File System.
+
+Supports:
+
+- Relative imports
+- Absolute imports
+- Extensionless imports
+- Directory index resolution
+- TypeScript and JavaScript files
 
 Example:
 
 ```ts
 resolve(
-    "/src/App.tsx",
+    "/src/App.ts",
     "./Button"
 );
 ```
@@ -158,20 +166,55 @@ resolve(
 ↓
 
 ```
-/src/Button.tsx
+/src/Button.ts
 ```
 
 Status:
 
 ```
-In Progress
+v1 Complete
 ```
 
 ---
 
+## ✅ dependency-graph
+
+Builds a complete dependency graph by recursively traversing project source files.
+
+Features:
+
+- Recursive dependency traversal
+- Circular dependency detection
+- Duplicate dependency prevention
+- Resolver integration
+- Analyzer integration
+- Graph generation from a single entry file
+
+Example:
+
+```ts
+const graph = dependencyGraph.build(
+    "/src/App.ts"
+);
+```
+
+↓
+
+```
+App.ts
+ ├── Button.ts
+ │    └── Utils.ts
+ └── Header.ts
+```
+
+Status:
+
+```
+v1 Complete
+```
+
 ## 📅 Planned Packages
 
-- dependency-graph
 - compiler
 - runtime
 - cache
@@ -187,8 +230,8 @@ In Progress
 | github-loader | ✅ Complete |
 | virtual-fs | ✅ Complete |
 | analyzer | ✅ Complete |
-| resolver | 🚧 Planned |
-| dependency-graph | 📅 Planned |
+| resolver | ✅ Complete |
+| dependency-graph | ✅ Complete |
 | compiler | 📅 Planned |
 | runtime | 📅 Planned |
 
