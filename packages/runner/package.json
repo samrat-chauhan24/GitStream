@@ -1,0 +1,25 @@
+{
+  "name": "@gitstream/runner",
+  "version": "1.0.0",
+  "type": "module",
+
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+
+  "scripts": {
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+
+  "dependencies": {
+    "@gitstream/compiler": "workspace:*",
+    "@gitstream/dependency-graph": "workspace:*",
+    "@gitstream/runtime": "workspace:*",
+    "@gitstream/virtual-fs": "workspace:*",
+    "@gitstream/core": "workspace:*",
+    "@gitstream/analyzer": "workspace:*",
+    "@gitstream/resolver": "workspace:*"
+
+
+  }
+}

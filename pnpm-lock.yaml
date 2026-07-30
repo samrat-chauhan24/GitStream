@@ -119,6 +119,30 @@ importers:
         specifier: ^4.1.0
         version: 4.1.9(@types/node@26.1.0)(vite@8.1.3(@types/node@26.1.0))
 
+  packages/runner:
+    dependencies:
+      '@gitstream/analyzer':
+        specifier: workspace:*
+        version: link:../analyzer
+      '@gitstream/compiler':
+        specifier: workspace:*
+        version: link:../compiler
+      '@gitstream/core':
+        specifier: workspace:*
+        version: link:../core
+      '@gitstream/dependency-graph':
+        specifier: workspace:*
+        version: link:../dependency-graph
+      '@gitstream/resolver':
+        specifier: workspace:*
+        version: link:../resolver
+      '@gitstream/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+      '@gitstream/virtual-fs':
+        specifier: workspace:*
+        version: link:../virtual-fs
+
   packages/runtime:
     dependencies:
       '@gitstream/core':

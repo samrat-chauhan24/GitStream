@@ -1,4 +1,5 @@
 import ts from "typescript";
+import type { DependencyEdge } from "@gitstream/dependency-graph";
 
 /**
  * Transforms ES Modules into a CommonJS-compatible format.
@@ -13,6 +14,7 @@ export class ModuleTransformer {
 
   transform(
     source: string,
+    dependencies: DependencyEdge[] = [],
   ): string {
 
     const sourceFile = ts.createSourceFile(
@@ -23,6 +25,16 @@ export class ModuleTransformer {
       ts.ScriptKind.TS,
     );
 
+    const dependencyMap =
+      new Map(
+        dependencies.map(
+          dependency => [
+            dependency.specifier,
+            dependency.resolved,
+          ],
+        ),
+      );
+
     const printer = ts.createPrinter();
 
     const transformer =
@@ -30,12 +42,13 @@ export class ModuleTransformer {
         context: ts.TransformationContext,
       ) => {
 
-        const visit: ts.Visitor = (
-          node,
-        ) => {
+        const visit: ts.Visitor = (node) => {
 
           if (ts.isImportDeclaration(node)) {
-            return this.handleImportDeclaration(node);
+            return this.handleImportDeclaration(
+              node,
+              dependencyMap,
+            );
           }
 
           if (ts.isExportAssignment(node)) {
@@ -102,8 +115,22 @@ export class ModuleTransformer {
   // Import Helpers
   // ==========================================
 
-  private handleImportDeclaration(node: ts.ImportDeclaration): ts.Node | ts.Node[] {
-    const specifier = node.moduleSpecifier;
+  private handleImportDeclaration(
+    node: ts.ImportDeclaration,
+    dependencyMap: Map<string, string>,
+  ): ts.Node | ts.Node[] {
+
+    const original =
+      (node.moduleSpecifier as ts.StringLiteral).text;
+
+    const resolved =
+      dependencyMap.get(original) ??
+      original;
+
+    const specifier =
+      ts.factory.createStringLiteral(
+        resolved,
+      );
 
     // import "./foo"
     if (!node.importClause) {

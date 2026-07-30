@@ -3,6 +3,7 @@ import { Resolver } from "@gitstream/resolver";
 import { VirtualFileSystem } from "@gitstream/virtual-fs";
 
 import {
+  DependencyEdge,
   DependencyGraphResult,
   DependencyNode,
 } from "./models";
@@ -64,7 +65,7 @@ export class GraphBuilder {
     const analysis =
       this.analyzer.analyze(source);
 
-    const dependencies: string[] = [];
+    const dependencies: DependencyEdge[] = [];
 
     for (const specifier of analysis.imports) {
 
@@ -78,9 +79,10 @@ export class GraphBuilder {
         continue;
       }
 
-      dependencies.push(
-        resolved.path
-      );
+      dependencies.push({
+        specifier,
+        resolved: resolved.path
+      });
 
       this.visit(
         resolved.path

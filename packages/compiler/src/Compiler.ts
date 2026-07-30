@@ -58,6 +58,7 @@ export class Compiler {
       const transformed =
         this.transformer.transform(
           transpiled,
+          node.dependencies,
         );
 
       modules[node.path] =

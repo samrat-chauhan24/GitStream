@@ -1,3 +1,5 @@
+import type { DependencyEdge } from "./DependencyEdge";
+
 /**
  * Represents a file in the dependency graph.
  */
@@ -9,8 +11,8 @@ export interface DependencyNode {
   path: string;
 
   /**
-   * Absolute paths of all direct dependencies.
+   * Direct dependencies of this module.
    */
-  dependencies: string[];
+  dependencies: DependencyEdge[];
 
 }
