@@ -104,6 +104,15 @@ importers:
         specifier: ^4.1.0
         version: 4.1.9(@types/node@26.1.0)(vite@8.1.3(@types/node@26.1.0))
 
+  packages/runtime:
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.9(@types/node@26.1.0)(vite@8.1.3(@types/node@26.1.0))
+
   packages/virtual-fs:
     devDependencies:
       typescript:
