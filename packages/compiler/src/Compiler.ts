@@ -53,6 +53,7 @@ export class Compiler {
       const transpiled =
         this.transpiler.transpile(
           source,
+          node.path
         );
 
       const transformed =
